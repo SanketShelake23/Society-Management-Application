@@ -1,6 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
 
+
 const Flat = sequelize.define("Flat", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   flat_number: { type: DataTypes.STRING, allowNull: false },
@@ -10,5 +11,7 @@ const Flat = sequelize.define("Flat", {
   tableName: "flats",
   timestamps: false
 });
+
+
 
 module.exports = Flat;
