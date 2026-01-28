@@ -13,6 +13,8 @@ const complaintRoutes = require("./routes/complaintRoutes.js");
 const billRoutes = require("./routes/billRoutes.js");
 const paymentRoutes = require("./routes/paymentRoutes.js");
 const visitorRoutes = require("./routes/visitorRoutes.js");
+const accountantRoutes = require("./routes/accountantRoutes.js");
+const reportRoutes = require("./routes/reportRoutes.js");
 
 const app = express();
 app.use(cors());
@@ -29,6 +31,8 @@ app.use("/api/complaints", complaintRoutes);
 app.use("/api/bills", billRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/visitors", visitorRoutes);
+app.use("/api/accountant", accountantRoutes);
+app.use("/api/reports", reportRoutes);
 
 // Checking Database Connectivity
 sequelize.authenticate()
