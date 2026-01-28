@@ -1,3 +1,4 @@
+const { User } = require("../models");
 const Flat = require("../models/Flat");
 
 const createFlat = async(req, res)=>{
@@ -35,4 +36,57 @@ const deleteFlat = async(req,res)=>{
     }
 };
 
-module.exports = {createFlat, getFlatsByBlock, assignResident, deleteFlat};
+const getUnassignedFlats = async (req, res) => {
+  try {
+    const flats = await Flat.findAll({
+      where: {
+        resident_id: null
+      },
+      attributes: ["id", "flat_number"]
+    });
+
+    res.json(flats);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+const getAssignedFlats = async (req, res) => {
+  try {
+    const flats = await Flat.findAll({
+      where: {
+        resident_id: { [require("sequelize").Op.ne]: null }
+      },
+      attributes: ["id", "flat_number"],
+      include: {
+        model: User,
+        attributes: ["id", "name"]
+      }
+    });
+
+    res.json(flats);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+const unassignResident = async (req, res) => {
+  try {
+    const { flatId } = req.params;
+
+    const flat = await Flat.findByPk(flatId);
+    if (!flat) {
+      return res.status(404).json({ message: "Flat not found" });
+    }
+
+    await flat.update({ resident_id: null });
+
+    res.json({ message: "Resident unassigned successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+module.exports = {createFlat, getFlatsByBlock, assignResident, deleteFlat, getUnassignedFlats, getAssignedFlats, unassignResident};
