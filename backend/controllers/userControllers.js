@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const Society = require("../models/Society");
 const bcrypt = require("bcryptjs");
+const { Flat } = require("../models");
 
 const createSocietyAdmin = async(req,res)=>{
     try{
@@ -162,8 +163,28 @@ const deleteResident = async (req, res) => {
 };
 
 
+const getUnassignedResidents = async (req, res) => {
+  try {
+    const residents = await User.findAll({
+      where: {
+        role: "RESIDENT",
+        society_id: req.user.society_id
+      },
+      attributes: ["id", "name"],
+      include: {
+        model: Flat,
+        required: false
+      }
+    });
 
+    // filter residents not assigned to any flat
+    const unassigned = residents.filter(r => !r.Flat);
 
+    res.json(unassigned);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
 
 //-- Guard :
 
@@ -214,5 +235,5 @@ const createAccountant = async(req,res)=>{
 
 
 module.exports = {createSocietyAdmin, getSocietyAdmins, updateSocietyAdmin, deleteSocietyAdmin, createResident, createGuard, createAccountant,
-  getResidents, updateResident, deleteResident
+  getResidents, updateResident, deleteResident, getUnassignedResidents
 };
