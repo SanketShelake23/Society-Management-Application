@@ -24,6 +24,12 @@ export default function Blocks() {
     loadBlocks();
   };
 
+  const handleDelete = async(id)=>{
+    if (!window.confirm("Delete this block?")) return;
+    await API.delete(`/blocks/${id}`);
+    loadBlocks();
+  }
+
   return (
     <div>
       <h3>Blocks</h3>
@@ -39,6 +45,7 @@ export default function Blocks() {
              <tr style={{ background: "#b000a2", color: "white", textAlign: "left" }}>
                  <th>Block Name</th>
                  <th>Action</th>
+                 <th>Delete</th>
              </tr>
          </thead>
          <tbody>
@@ -46,6 +53,7 @@ export default function Blocks() {
                <tr key={b.id} style={{ borderBottom: "1px solid #eee" }}>
                    <td>{b.name}</td>
                    <td> <Link to={`/superadmin/block/${b.id}/flats`}>Manage Flats</Link></td>
+                   <td> <button onClick={()=>handleDelete(b.id)}>Delete</button> </td>
                </tr>
              ))}
          </tbody>
