@@ -24,6 +24,12 @@ export default function Flats() {
     loadFlats();
   };
 
+  const handleDelete = async(id)=>{
+    if (!window.confirm("Delete this flat?")) return;
+    await API.delete(`/flats/${id}`);
+    loadFlats();
+  }
+
   return (
     <div>
       <h3>Flats</h3>
@@ -35,7 +41,10 @@ export default function Flats() {
 
       <ul>
         {flats.map(f => (
-          <li key={f.id}>{f.flat_number}</li>
+          <li key={f.id}>
+            {f.flat_number}
+            &nbsp; <button onClick={()=>handleDelete(f.id)}>Delete</button>
+          </li>
         ))}
       </ul>
 

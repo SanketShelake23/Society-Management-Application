@@ -26,6 +26,12 @@ export default function Socities(){
        loadSocities();
     }
 
+    const handleDelete = async(id)=>{
+       if (!window.confirm("Are you sure you want to delete this society?")) return;
+       await API.delete(`/societies/${id}`);
+       loadSocities();
+    }
+
     return(
         <div>
             <h3>Society</h3>
@@ -44,7 +50,9 @@ export default function Socities(){
                         <tr style={{ background: "#b000a2", color: "white", textAlign: "left" }}>
                             <th>Name</th>
                             <th>Address</th>
+                            <th>Society Admin</th>
                             <th>Action</th>
+                            <th>Delete</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -52,7 +60,9 @@ export default function Socities(){
                             <tr key={society.id}  style={{ borderBottom: "1px solid #eee" }}>
                                 <td>{society.name}</td>
                                 <td>{society.address}</td>
+                                <td>{society.societyAdmin}</td>
                                 <td> <Link to={`/superadmin/society/${society.id}/blocks`}>Manage Blocks</Link> </td>
+                                <td style={{padding:"5px"}}> <button onClick={()=>handleDelete(society.id)} style={{backgroundColor:"red", color:"white", borderRadius:"5px", border:"none"}}>Delete</button> </td>
                             </tr>
                         ))}
                     </tbody>
