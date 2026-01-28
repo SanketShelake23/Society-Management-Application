@@ -24,4 +24,15 @@ const assignResident = async(req,res)=>{
    res.json("Resident is Assigned to the Flat Successfully.");
 };
 
-module.exports = {createFlat, getFlatsByBlock, assignResident};
+const deleteFlat = async(req,res)=>{
+    try{
+      const {id} = req.params;
+      await Flat.destroy({where : {id}});
+      res.json({ message: "Flat deleted successfully" });
+    }
+    catch(err){
+        res.status(500).json({message : err.message});
+    }
+};
+
+module.exports = {createFlat, getFlatsByBlock, assignResident, deleteFlat};
