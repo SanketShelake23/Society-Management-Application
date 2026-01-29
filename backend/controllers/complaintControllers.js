@@ -1,3 +1,4 @@
+const { User, Flat, Block } = require("../models");
 const Complaint = require("../models/Complaint");
 
 
@@ -6,7 +7,22 @@ const getComplaints = async(req,res)=>{
     try{
         const complaints = await Complaint.findAll({
           where : { society_id : req.user.society_id},
-          order : [["created_at", "DESC"]]
+          order : [["created_at", "DESC"]],
+
+          include : [
+            {
+             model : User,
+             attributes : ["id", "name"],
+             include : [{
+                model : Flat,
+                attributes : ["id", "flat_number"],
+                include : [{
+                    model : Block,
+                    attributes : ["id", "name"]
+                }]
+              }]
+            }
+           ]
         });
 
         res.status(200).json(complaints);

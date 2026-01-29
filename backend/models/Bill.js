@@ -3,6 +3,7 @@ const sequelize = require("../config/db");
 
 const Bill = sequelize.define("Bill", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  title : {type : DataTypes.STRING, allowNull: false},
   flat_id: { type: DataTypes.INTEGER, allowNull: false },
   amount: { type: DataTypes.DECIMAL(10,2), allowNull: false },
   billing_month: { type: DataTypes.STRING },

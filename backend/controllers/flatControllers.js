@@ -1,4 +1,4 @@
-const { User } = require("../models");
+const { User, Block } = require("../models");
 const Flat = require("../models/Flat");
 
 const createFlat = async(req, res)=>{
@@ -40,9 +40,15 @@ const getUnassignedFlats = async (req, res) => {
   try {
     const flats = await Flat.findAll({
       where: {
-        resident_id: null
+        resident_id: null,
+        
       },
-      attributes: ["id", "flat_number"]
+      attributes: ["id", "flat_number"],
+      include : {
+         model : Block,
+         attributes : [],
+         where : { society_id : req.user.society_id}
+      }
     });
 
     res.json(flats);
@@ -58,10 +64,15 @@ const getAssignedFlats = async (req, res) => {
         resident_id: { [require("sequelize").Op.ne]: null }
       },
       attributes: ["id", "flat_number"],
-      include: {
+      include: [ {
         model: User,
         attributes: ["id", "name"]
-      }
+      },
+      {
+         model : Block,
+         attributes : ["id", "name"],
+         where : { society_id : req.user.society_id}
+      } ]
     });
 
     res.json(flats);
