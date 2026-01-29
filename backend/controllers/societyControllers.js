@@ -77,4 +77,31 @@ const deleteSociety = async(req,res)=>{
    }
 }
 
-module.exports = {createSociety, getAllSociety, deleteSociety};
+const getUnassignedSocities = async(req,res)=>{
+
+    try{
+       const societies = await Society.findAll({
+         include : [
+            {
+            model : User,
+            where : {role : "SOCIETY_ADMIN"},
+            required : false
+           }
+         ]
+       });
+
+       const unassigned = societies.filter(s => s.Users.length===0);
+
+       const formatted = unassigned.map(s=>({
+         id : s.id,
+         name : s.name
+       }));
+
+       res.json(formatted);
+    }
+    catch(err){
+        res.status(500).json({message : err.message});
+    }
+}
+
+module.exports = {createSociety, getAllSociety, deleteSociety, getUnassignedSocities};
