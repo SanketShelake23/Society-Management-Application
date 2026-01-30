@@ -12,7 +12,7 @@ router.put("/unassign/:flatId", auth, role("SOCIETY_ADMIN"), unassignResident);
 
 router.post("/", auth, role("SUPER_ADMIN"), createFlat);
 
-router.get("/:blockId", auth, role("SUPER_ADMIN"), getFlatsByBlock);
+router.get("/:blockId", auth, role("SUPER_ADMIN", "GUARD"), getFlatsByBlock);
 
 router.delete("/:id", auth, role("SUPER_ADMIN"), deleteFlat );
 

@@ -4,6 +4,10 @@ const sequelize = require("../config/db");
 const VisitorLog = sequelize.define("VisitorLog", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   visitor_name: { type: DataTypes.STRING },
+  purpose: {
+    type: DataTypes.ENUM("MAINTENANCE", "DELIVERY", "GUEST", "OTHER"),
+    allowNull: false
+  },
   flat_id: { type: DataTypes.INTEGER, allowNull: false },
   guard_id: { type: DataTypes.INTEGER, allowNull: false },
   entry_time: { type: DataTypes.DATE },
@@ -14,3 +18,4 @@ const VisitorLog = sequelize.define("VisitorLog", {
 });
 
 module.exports = VisitorLog;
+  

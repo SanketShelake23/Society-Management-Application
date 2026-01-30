@@ -13,6 +13,7 @@ const getFlatsByBlock = async(req,res)=>{
     res.json(flats);
 };
 
+
 const assignResident = async(req,res)=>{
    const {flatId} = req.params;
    const {resident_id} = req.body;
@@ -98,6 +99,9 @@ const unassignResident = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+
+
 
 
 module.exports = {createFlat, getFlatsByBlock, assignResident, deleteFlat, getUnassignedFlats, getAssignedFlats, unassignResident};

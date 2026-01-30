@@ -2,7 +2,9 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../middlewares/authMiddleware");
 const role = require("../middlewares/roleMiddleware");
-const {createSocietyAdmin, createResident, createGuard, getSocietyAdmins, updateSocietyAdmin, deleteSocietyAdmin, createAccountant, getResidents, updateResident, deleteResident, getUnassignedResidents, unassignSocietyAdmin, getGuards, deleteGuard, getAccountant, deleteAccountant} = require("../controllers/userControllers");
+const {createSocietyAdmin, createResident, createGuard, getSocietyAdmins, updateSocietyAdmin, deleteSocietyAdmin, createAccountant, getResidents, updateResident, deleteResident, getUnassignedResidents, unassignSocietyAdmin, getGuards, deleteGuard, getAccountant, deleteAccountant, getResidentProfile, resetPassword} = require("../controllers/userControllers");
+
+router.put("/reset-password", auth, resetPassword);
 
 router.post("/society-admin", auth, role("SUPER_ADMIN"), createSocietyAdmin);
 router.get("/society-admin", auth, role("SUPER_ADMIN"), getSocietyAdmins);
@@ -13,6 +15,7 @@ router.delete("/society-admin/:id", auth, role("SUPER_ADMIN"), deleteSocietyAdmi
 router.get("/resident/unassigned", auth, role("SOCIETY_ADMIN","COMMITTEE_MEMBER"), getUnassignedResidents);
 router.post("/resident", auth, role("SOCIETY_ADMIN","COMMITTEE_MEMBER"), createResident);
 router.get("/resident", auth, role("SOCIETY_ADMIN","COMMITTEE_MEMBER"), getResidents);
+router.get("/resident/profile", auth, role("RESIDENT"), getResidentProfile);
 router.put("/resident/:id", auth, role("SOCIETY_ADMIN","COMMITTEE_MEMBER"), updateResident);
 router.delete("/resident/:id", auth, role("SOCIETY_ADMIN","COMMITTEE_MEMBER"), deleteResident);
 
