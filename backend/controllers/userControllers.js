@@ -1,7 +1,7 @@
 const User = require("../models/User");
 const Society = require("../models/Society");
 const bcrypt = require("bcryptjs");
-const { Flat } = require("../models");
+const { Flat, Block } = require("../models");
 
 const createSocietyAdmin = async(req,res)=>{
     try{
@@ -201,6 +201,39 @@ const getUnassignedResidents = async (req, res) => {
   }
 };
 
+
+
+const getResidentProfile = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id, {
+      attributes: ["id", "name", "email"],
+      include: [
+        {
+          model: Flat,
+          attributes: ["id", "flat_number"],
+          required: false, // IMPORTANT: allow resident without flat
+          include: [
+            {
+              model: Block,
+              attributes: ["id", "name"],
+              include: [
+                {
+                  model: Society,
+                  attributes: ["id", "name"]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    });
+
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 //-- Guard :
 
 const createGuard = async(req,res)=>{
@@ -361,6 +394,40 @@ const deleteAccountant = async (req, res) => {
 };
 
 
+// Reset Password for all users :
+const resetPassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Fetch logged-in user
+    const user = await User.findByPk(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Compare current password
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Current password is incorrect" });
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update password
+    await user.update({ password: hashedPassword });
+
+    res.json({ message: "Password reset successful" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
 module.exports = {createSocietyAdmin, getSocietyAdmins, deleteSocietyAdmin, createResident, createGuard, createAccountant,
-  getResidents, updateResident, deleteResident, getUnassignedResidents, getGuards, deleteGuard, getAccountant, deleteAccountant
+  getResidents, updateResident, deleteResident, getUnassignedResidents, getGuards, deleteGuard, getAccountant, deleteAccountant, getResidentProfile, resetPassword
 };

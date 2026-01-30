@@ -1,12 +1,14 @@
 const visitorLog = require("../models/VisitorLog");
 const Flat = require("../models/Flat");
 const VisitorLog = require("../models/VisitorLog");
+const Block = require("../models/Block");
 
 const addVisitor = async(req, res)=>{
    try{
-   const { visitor_name, flat_id} = req.body;
+   const { visitor_name, purpose, flat_id} = req.body;
    const visitor = await visitorLog.create({
      visitor_name,
+     purpose,
      flat_id,
      guard_id : req.user.id,
      entry_time : new Date()
@@ -16,7 +18,7 @@ const addVisitor = async(req, res)=>{
    catch(err){
      res.status(500).json({message : err.message});
    }
-};
+};  
 
 const markExit = async(req, res)=>{
    try{
@@ -35,7 +37,23 @@ const markExit = async(req, res)=>{
 const getSocietyVisitors = async(req,res)=>{
    try{
      const visitors = await VisitorLog.findAll({
-        include : [{model : Flat}],
+        include : [
+          {
+            model : Flat,
+            required : true,
+            attributes : ["id","flat_number"],
+            include : [
+              {
+                model: Block,
+                required : true,
+                attributes: ["id","name"],
+                where : {
+                  society_id : req.user.society_id
+                }
+              }
+            ]
+          }
+        ],
         order: [["entry_time", "DESC"]]
      });
      res.status(200).json(visitors);
@@ -68,4 +86,20 @@ const getResidentVisitors = async(req,res)=>{
     }
 }
 
-module.exports = {addVisitor, markExit, getSocietyVisitors, getResidentVisitors};
+
+const getSocietyBlocksForGuard = async (req, res) => {
+  try {
+    const blocks = await Block.findAll({
+      where: { society_id: req.user.society_id },
+      attributes: ["id", "name"]
+    });
+
+    res.json(blocks);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+
+module.exports = {addVisitor, markExit, getSocietyVisitors, getResidentVisitors, getSocietyBlocksForGuard};

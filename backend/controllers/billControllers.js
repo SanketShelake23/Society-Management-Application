@@ -68,7 +68,8 @@ const getResidentBills = async(req,res)=>{
           include: {
             model: Flat,
             where: {  resident_id : req.user.id },
-          }
+          },
+          order : [["created_at", "DESC"]]
        });
 
        res.status(200).json(bills);

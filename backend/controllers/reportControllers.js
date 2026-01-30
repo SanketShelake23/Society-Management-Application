@@ -5,9 +5,10 @@ const billsReport = async(req, res)=>{
     const bills = await Bill.findAll({
         include : {
             model : Flat,
+            required : true,
             include : [
-                { model : User, attributes: ["name"] },
-                { model : Block, attributes: ["name"] }
+                { model : User, attributes: ["name"], required : true },
+                { model : Block, attributes: ["name"], where : {society_id : req.user.society_id}, required : true }
             ]
         }
     });
